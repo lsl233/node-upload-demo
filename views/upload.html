@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>upload demo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.min.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
+</head>
+<body>
+<section class="section">
+    <div class="container">
+        <h1 class="title">文件上传 demo</h1>
+
+        <div class="columns">
+            <div class="column">
+                <form>
+                    <div class="field">
+                        <label class="label">name</label>
+                        <div class="control has-icons-left has-icons-right">
+                            <input id="name" class="input" name="name" type="text" placeholder="name" value="">
+                            <span class="icon is-small is-left">
+                                <i class="fas fa-user"></i>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="field file has-name is-fullwidth">
+                        <label class="file-label">
+                            <input id="file" name="file" class="file-input" multiple="multiple" type="file">
+                            <span class="file-cta">
+                              <span class="file-icon">
+                                <i class="fas fa-upload"></i>
+                              </span>
+                              <span class="file-label">
+                                Choose a file…
+                              </span>
+                            </span>
+                            <span id="filesName" class="file-name"></span>
+                        </label>
+                    </div>
+
+                    <div class="field is-grouped">
+                        <p class="control">
+                            <a id="submit" class="button is-primary">Submit </a>
+                        </p>
+                        <p class="control">
+                            <a class="button is-light">
+                                Cancel
+                            </a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+</section>
+
+<script>
+    window.onload = function () {
+        const fileElem = document.getElementById('file');
+        const filesNameElem = document.getElementById('filesName');
+        const submitElem = document.getElementById('submit');
+        const nameElem = document.getElementById('name');
+
+        fileElem.onchange = function (event) {
+            console.log(event);
+            filesNameElem.innerText = event.target.value;
+        };
+
+        submitElem.onclick = function (event) {
+            const name = nameElem.value;
+            const files = fileElem.files;
+
+
+            const formData = new FormData();
+            formData.append('name', name);
+            for (const file of files) {
+                formData.append('files', file);
+            }
+            fetch('/api/upload', {
+                body: formData,
+                method: "POST"
+            }).then((response) => response.json());
+        };
+    }
+</script>
+</body>
+</html>
