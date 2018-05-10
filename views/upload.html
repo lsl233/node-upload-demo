@@ -78,12 +78,15 @@
 
         const tagHtml = '<span class="tag is-success">{{fileName}}<button class="delete is-small"></button></span>';
 
+        // 临时存放文件对象;
         const fileStore = {};
 
         fileElem.onchange = function (event) {
             console.log(event);
             const file = event.target.files[0];
+            // 以文件名为key，文件对象为value， 存放；
             fileStore[file.name] = file;
+
             const html = filesBoxElem.innerHTML;
             filesBoxElem.innerHTML = html + tagHtml.replace('{{fileName}}', file.name)
         };
@@ -102,6 +105,8 @@
 
             const formData = new FormData();
             formData.append('name', name);
+
+            // 提取fileStore 存放的文件对象， 转存到formdata；
             for (const fileName in fileStore) {
                 const file = fileStore[fileName];
                 formData.append('files', file);
