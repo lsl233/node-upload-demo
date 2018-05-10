@@ -49,8 +49,15 @@
                             <input id="cancel" class="button is-light" type="reset" value="Cancel">
                         </p>
                     </div>
+
+
+                    <figure class="image is-128x128">
+                        <canvas id="canvas"></canvas>
+                        <img id="preview" src="" />
+                    </figure>
                 </form>
             </div>
+            <div class="column"></div>
         </div>
     </div>
 
@@ -68,6 +75,7 @@
         fileElem.onchange = function (event) {
             console.log(event);
             const filesName = [];
+            readImage(event.target.files[0]);
             for (const file of event.target.files) {
                 filesName.push(file.name);
             }
@@ -79,7 +87,7 @@
             nameElem.value = '';
         }
 
-        cancelElem.onclick = cancel
+        cancelElem.onclick = cancel;
 
         submitElem.onclick = function (event) {
             submitElem.setAttribute('disabled', true);
@@ -97,10 +105,37 @@
                     console.log(result);
                     cancel();
                 })
+                .catch((error) => {
+                    console.error(error);
+                })
                 .then(() => {
                     submitElem.removeAttribute('disabled')
                 })
         };
+
+        function readImage (file) {
+            if (!/image\/\w+/.test(file.type)) {
+                return;
+            }
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function (event) {
+                drawToCanvas(this.result);
+            }
+        }
+
+        function drawToCanvas (imgData) {
+            const canvas = document.getElementById('canvas');
+            canvas.width = 128;
+            canvas.height = 128;
+            const ctx = canvas.getContext('2d');
+            const img = new Image;
+            img.src = imgData;
+            img.onload = function () {
+                ctx.drawImage(img, 0, 0, 128, 128);
+                document.getElementById('preview').setAttribute('src', canvas.toDataURL())
+            }
+        }
     }
 </script>
 </body>
