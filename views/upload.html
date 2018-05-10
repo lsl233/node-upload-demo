@@ -16,7 +16,6 @@
             <div class="column">
                 <form>
                     <div class="field">
-                        <label class="label">name</label>
                         <div class="control has-icons-left has-icons-right">
                             <input id="name" class="input" name="name" type="text" placeholder="name" value="">
                             <span class="icon is-small is-left">
@@ -25,19 +24,21 @@
                         </div>
                     </div>
 
-                    <div class="field file has-name is-fullwidth">
-                        <label class="file-label">
-                            <input id="file" name="file" class="file-input" multiple="multiple" type="file">
-                            <span class="file-cta">
-                              <span class="file-icon">
-                                <i class="fas fa-upload"></i>
-                              </span>
-                              <span class="file-label">
-                                Choose a file…
-                              </span>
-                            </span>
-                            <span id="filesName" class="file-name"></span>
-                        </label>
+                    <div class="field">
+                        <div class="file has-name is-fullwidth">
+                            <label class="file-label">
+                                <input id="file" name="file" class="file-input" multiple="multiple" type="file">
+                                <span class="file-cta">
+                                  <span class="file-icon">
+                                    <i class="fas fa-upload"></i>
+                                  </span>
+                                  <span class="file-label">
+                                    Choose a file…
+                                  </span>
+                                </span>
+                                <span id="filesName" class="file-name"></span>
+                            </label>
+                        </div>
                     </div>
 
                     <div class="field is-grouped">
@@ -45,9 +46,7 @@
                             <a id="submit" class="button is-primary">Submit </a>
                         </p>
                         <p class="control">
-                            <a class="button is-light">
-                                Cancel
-                            </a>
+                            <input id="cancel" class="button is-light" type="reset" value="Cancel">
                         </p>
                     </div>
                 </form>
@@ -63,27 +62,44 @@
         const fileElem = document.getElementById('file');
         const filesNameElem = document.getElementById('filesName');
         const submitElem = document.getElementById('submit');
+        const cancelElem = document.getElementById('cancel');
         const nameElem = document.getElementById('name');
 
         fileElem.onchange = function (event) {
             console.log(event);
-            filesNameElem.innerText = event.target.value;
+            const filesName = [];
+            for (const file of event.target.files) {
+                filesName.push(file.name);
+            }
+            filesNameElem.innerText = filesName.join(',');
         };
 
+        function cancel () {
+            filesNameElem.innerText = '';
+            nameElem.value = '';
+        }
+
+        cancelElem.onclick = cancel
+
         submitElem.onclick = function (event) {
+            submitElem.setAttribute('disabled', true);
             const name = nameElem.value;
             const files = fileElem.files;
-
 
             const formData = new FormData();
             formData.append('name', name);
             for (const file of files) {
                 formData.append('files', file);
             }
-            fetch('/api/upload', {
-                body: formData,
-                method: "POST"
-            }).then((response) => response.json());
+            fetch('/api/upload', { body: formData, method: 'POST' })
+                .then((response) => response.json())
+                .then((result) => {
+                    console.log(result);
+                    cancel();
+                })
+                .then(() => {
+                    submitElem.removeAttribute('disabled')
+                })
         };
     }
 </script>
