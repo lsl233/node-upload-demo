@@ -46,7 +46,7 @@
 
                     <div class="field is-grouped">
                         <p class="control">
-                            <a id="submit" class="button is-primary">Submit </a>
+                            <button id="submit" class="button is-primary">Submit </button>
                         </p>
                         <p class="control">
                             <input id="cancel" class="button is-light" type="reset" value="Cancel">
@@ -145,7 +145,7 @@
             img.src = imgData;
             img.onload = function () {
                 ctx.drawImage(img, 0, 0, 128, 128);
-                document.getElementById('preview').setAttribute('src', canvas.toDataURL())
+                document.getElementById('preview').setAttribute('src', canvas.toDataURL());
             }
         }
     }
