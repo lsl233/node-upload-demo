@@ -27,7 +27,7 @@
                     <div class="field">
                         <div class="file has-name is-fullwidth">
                             <label class="file-label">
-                                <input id="file" name="file" class="file-input" multiple="multiple" type="file">
+                                <input id="file" name="file" class="file-input" type="file">
                                 <span class="file-cta">
                                   <span class="file-icon">
                                     <i class="fas fa-upload"></i>
@@ -39,6 +39,9 @@
                                 <span id="filesName" class="file-name"></span>
                             </label>
                         </div>
+                    </div>
+
+                    <div id="filesBox" class="tags">
                     </div>
 
                     <div class="field is-grouped">
@@ -71,15 +74,18 @@
         const submitElem = document.getElementById('submit');
         const cancelElem = document.getElementById('cancel');
         const nameElem = document.getElementById('name');
+        const filesBoxElem = document.getElementById('filesBox');
+
+        const tagHtml = '<span class="tag is-success">{{fileName}}<button class="delete is-small"></button></span>';
+
+        const fileStore = {};
 
         fileElem.onchange = function (event) {
             console.log(event);
-            const filesName = [];
-            readImage(event.target.files[0]);
-            for (const file of event.target.files) {
-                filesName.push(file.name);
-            }
-            filesNameElem.innerText = filesName.join(',');
+            const file = event.target.files[0];
+            fileStore[file.name] = file;
+            const html = filesBoxElem.innerHTML;
+            filesBoxElem.innerHTML = html + tagHtml.replace('{{fileName}}', file.name)
         };
 
         function cancel () {
@@ -96,7 +102,8 @@
 
             const formData = new FormData();
             formData.append('name', name);
-            for (const file of files) {
+            for (const fileName in fileStore) {
+                const file = fileStore[fileName];
                 formData.append('files', file);
             }
             fetch('/api/upload', { body: formData, method: 'POST' })
